@@ -24,7 +24,7 @@ A Deno TypeScript WebSocket client for collecting image streams from WebSocket s
 ```typescript
 import { PixelSocket } from "./pixel_socket.ts";
 const client = new PixelSocket({
-    url: "wss://vite-based-comfyui-web-interface/ws/broadcast",
+    url: "wss://vite-based-comfyui-web-interface/ws/streaming",
     saveDirectory: "./images",
     onImage: (imageData, metadata) => {
         console.log(`Received image: ${imageData.length} bytes`);
@@ -148,7 +148,7 @@ PixelSocket supports multiple message formats:
 
 #### Image-Generated Event Format
 
-The WebSocket server at `wss://vite-based-comfyui-web-interface/ws/broadcast` sends messages in this format:
+The WebSocket server at `wss://vite-based-comfyui-web-interface/ws/streaming` sends messages in this format:
 
 ```json
 {
@@ -184,7 +184,7 @@ PixelSocket automatically handles this format and provides all metadata in the `
 
 ```typescript
 const client = new PixelSocket({
-  url: "wss://vite-based-comfyui-web-interface/ws/broadcast",
+  url: "wss://vite-based-comfyui-web-interface/ws/streaming",
   saveDirectory: "./images",
   onImage: (imageData, metadata) => {
     // Custom processing
@@ -211,7 +211,7 @@ const client = new PixelSocket({
 
 ```typescript
 const client = new PixelSocket({
-  url: "wss://vite-based-comfyui-web-interface/ws/broadcast",
+  url: "wss://vite-based-comfyui-web-interface/ws/streaming",
   autoReconnect: true,
   reconnectDelay: 3000,
   maxReconnectAttempts: 5,
@@ -225,7 +225,7 @@ const client = new PixelSocket({
 
 ```typescript
 const client = new PixelSocket({
-  url: "wss://vite-based-comfyui-web-interface/ws/broadcast",
+  url: "wss://vite-based-comfyui-web-interface/ws/streaming",
   onConnect: () => {
     // Send a message when connected
     client.send(JSON.stringify({ action: "start_stream" }));
@@ -247,7 +247,7 @@ Images are saved with the appropriate file extension based on their detected for
 
 ```typescript
 const client = new PixelSocket({
-  url: "wss://vite-based-comfyui-web-interface/ws/broadcast",
+  url: "wss://vite-based-comfyui-web-interface/ws/streaming",
   onError: (error) => {
     console.error(`Error occurred: ${error.message}`);
     // Handle error appropriately

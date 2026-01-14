@@ -1,6 +1,6 @@
 import { PixelSocket } from "./pixel_socket.ts";
 const client = new PixelSocket({
-    url: "wss://vite-based-comfyui-web-interface/ws/broadcast",
+    url: "wss://vite-based-comfyui-web-interface/ws/streaming",
     saveDirectory: "./images",
     onImage: (imageData, metadata) => {
         console.log(`Received image: ${imageData.length} bytes`);

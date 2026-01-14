@@ -20,7 +20,7 @@ export class PixelSocket {
             autoReconnect: true,
             reconnectDelay: 5000,
             maxReconnectAttempts: 10,
-            saveDirectory: "./received_images", // More explicit default directory name
+            saveDirectory: "./images", // More explicit default directory name
             onImage: () => { },
             onConnect: () => { },
             onDisconnect: () => { },
@@ -49,6 +49,14 @@ export class PixelSocket {
                 this.stats.connectedAt = new Date();
                 this.stats.reconnectAttempts = 0;
                 console.log(`[PixelSocket] Connected to ${this.options.url}`);
+
+                // Send subscription message to the server
+                const subscribeMessage = JSON.stringify({
+                    type: 'subscribe',
+                    mode: 'all',
+                });
+                this.socket!.send(subscribeMessage);
+
                 this.options.onConnect();
             };
 
