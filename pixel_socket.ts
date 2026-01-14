@@ -13,6 +13,7 @@ export class PixelSocket {
     private options: Required<PixelSocketOptions>;
     private stats: ConnectionStats;
     private reconnectTimeout: number | null = null;
+    private pingTimeout: number | null = null;
     private shouldReconnect = true;
 
     constructor(options: PixelSocketOptions) {
@@ -56,6 +57,9 @@ export class PixelSocket {
                     mode: 'all',
                 });
                 this.socket!.send(subscribeMessage);
+
+                // Start keep-alive ping
+                this.startPingInterval();
 
                 this.options.onConnect();
             };
@@ -327,6 +331,27 @@ export class PixelSocket {
     }
 
     /**
+     * Start keep-alive ping interval (20 seconds)
+     */
+    private startPingInterval(): void {
+        if (this.pingTimeout !== null) {
+            clearInterval(this.pingTimeout);
+        }
+
+        this.pingTimeout = setInterval(() => {
+            if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                const pingMessage = JSON.stringify({ type: 'ping' });
+                try {
+                    this.socket.send(pingMessage);
+                    console.log('[PixelSocket] Sent ping');
+                } catch (error) {
+                    console.error('[PixelSocket] Error sending ping:', error);
+                }
+            }
+        }, 20000); // 20 seconds
+    }
+
+    /**
      * Send data to the WebSocket server
      */
     send(data: string | ArrayBuffer | Uint8Array): void {
@@ -344,6 +369,10 @@ export class PixelSocket {
         if (this.reconnectTimeout !== null) {
             clearTimeout(this.reconnectTimeout);
             this.reconnectTimeout = null;
+        }
+        if (this.pingTimeout !== null) {
+            clearInterval(this.pingTimeout);
+            this.pingTimeout = null;
         }
         if (this.socket) {
             this.socket.close();
